@@ -56,9 +56,9 @@ function defineKeyPropWarningGetter(props, displayName) {
       warningWithoutStack(
         false,
         '%s: `key` is not a prop. Trying to access it will result ' +
-        'in `undefined` being returned. If you need to access the same ' +
-        'value within the child component, you should pass it as a different ' +
-        'prop. (https://fb.me/react-special-props)',
+          'in `undefined` being returned. If you need to access the same ' +
+          'value within the child component, you should pass it as a different ' +
+          'prop. (https://fb.me/react-special-props)',
         displayName,
       );
     }
@@ -77,9 +77,9 @@ function defineRefPropWarningGetter(props, displayName) {
       warningWithoutStack(
         false,
         '%s: `ref` is not a prop. Trying to access it will result ' +
-        'in `undefined` being returned. If you need to access the same ' +
-        'value within the child component, you should pass it as a different ' +
-        'prop. (https://fb.me/react-special-props)',
+          'in `undefined` being returned. If you need to access the same ' +
+          'value within the child component, you should pass it as a different ' +
+          'prop. (https://fb.me/react-special-props)',
         displayName,
       );
     }
@@ -175,7 +175,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
  * 根据 type 返回一个新的 ReactElement
  * See https://reactjs.org/docs/react-api.html#createelement
  */
-  export function createElement(type, config, children) {
+export function createElement(type, config, children) {
   let propName;
 
   // Reserved names are extracted
@@ -214,6 +214,9 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
   // Children can be more than one argument, and those are transferred onto
   // the newly allocated props object.
   // 处理 children 的几个操作，很简单
+  // 首先把第二个参数之后的参数取出来，然后判断长度是否大于一。大于一的话就代表有多个 children，这时候 props.children 会是一个数组，
+  // 否则的话只是一个对象。因此我们需要注意在对 props.children 进行遍历的时候要注意它是否是数组，
+  // react 组件的children属性是在创建element的时候添加的
   const childrenLength = arguments.length - 2;
   if (childrenLength === 1) {
     props.children = children;
@@ -270,6 +273,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
  * Return a function that produces ReactElements of a given type.
  * See https://reactjs.org/docs/react-api.html#createfactory
  */
+//  返回react元素的类型
 export function createFactory(type) {
   const factory = createElement.bind(null, type);
   // Expose the type on the factory and the prototype so that it can be
@@ -356,6 +360,7 @@ export function cloneElement(element, config, children) {
 
   // Children can be more than one argument, and those are transferred onto
   // the newly allocated props object.
+  // clone 和create一样，需要对children进行判断
   const childrenLength = arguments.length - 2;
   if (childrenLength === 1) {
     props.children = children;
