@@ -22,6 +22,8 @@ if (__DEV__) {
 /**
  * Base class helpers for the updating state of a component.
  */
+// Component 与  PureComponent 构造函数
+// 具体的生命周期要看updater
 function Component(props, context, updater) {
   this.props = props;
   this.context = context;

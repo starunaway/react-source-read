@@ -16,7 +16,6 @@ import warningWithoutStack from 'shared/warningWithoutStack';
 export default function forwardRef<Props, ElementType: React$ElementType>(
   render: (props: Props, ref: React$Ref<ElementType>) => React$Node,
 ) {
-
   if (__DEV__) {
     if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
       warningWithoutStack(
@@ -56,3 +55,10 @@ export default function forwardRef<Props, ElementType: React$ElementType>(
     render,
   };
 }
+
+//  给render添加一个ref属性
+// const FancyButton = React.forwardRef((props, ref) => (
+//   <button ref={ref} className="FancyButton">
+//   {props.children}
+// </button>
+// ))

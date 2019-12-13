@@ -285,6 +285,7 @@ export function createFactory(type) {
   return factory;
 }
 
+// 重新生成源节点并替换key，目测是用于做diff
 export function cloneAndReplaceKey(oldElement, newKey) {
   const newElement = ReactElement(
     oldElement.type,

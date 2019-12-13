@@ -32,6 +32,8 @@ const SUBSEPARATOR = ':';
 // 另外如果你不了解这个 API 干嘛用的，可以阅读文档 https://reactjs.org/docs/react-api.html#reactchildren
 // 接下来我们就直接定位到 mapChildren 函数，开始阅读吧
 
+//  mapChildren 将react的children使用callback对单个可渲染节点进行处理，如果children是个数组，递归处理
+
 /**
  * Escape and wrap key so it is safe to use as a reactid
  *
@@ -72,6 +74,7 @@ function getPooledTraverseContext(
   mapContext,
 ) {
   if (traverseContextPool.length) {
+    // 使用对象重用池的一个对象
     const traverseContext = traverseContextPool.pop();
     traverseContext.result = mapResult;
     traverseContext.keyPrefix = keyPrefix;
@@ -97,6 +100,7 @@ function releaseTraverseContext(traverseContext) {
   traverseContext.context = null;
   traverseContext.count = 0;
   if (traverseContextPool.length < POOL_SIZE) {
+    // 将对象置空，放回重用池中
     traverseContextPool.push(traverseContext);
   }
 }
@@ -109,6 +113,7 @@ function releaseTraverseContext(traverseContext) {
  * process.
  * @return {!number} The number of children in this subtree.
  */
+//  返回的是这棵子树下面子节点的数量
 function traverseAllChildrenImpl(
   children,
   nameSoFar,
@@ -303,6 +308,7 @@ function forEachChildren(children, forEachFunc, forEachContext) {
   if (children == null) {
     return children;
   }
+  //    traverseContext 使用对象重用池中的一个元素
   const traverseContext = getPooledTraverseContext(
     null,
     null,
@@ -310,6 +316,7 @@ function forEachChildren(children, forEachFunc, forEachContext) {
     forEachContext,
   );
   traverseAllChildren(children, forEachSingleChild, traverseContext);
+  //   使用完后将这个对象重置一下，再放回去，不用new一个新的对象，减少性能开销
   releaseTraverseContext(traverseContext);
 }
 
@@ -327,6 +334,7 @@ function mapSingleChildIntoContext(bookKeeping, child, childKey) {
   // 判断函数返回值是否为数组
   // 因为可能会出现这种情况
   // React.Children.map(this.props.children, c => [c, c])
+  // React.Children.map 还会将数组扁平化
   // 对于 c => [c, c] 这种情况来说，每个子元素都会被返回出去两次
   // 也就是说假如有 2 个子元素 c1 c2，那么通过调用 React.Children.map(this.props.children, c => [c, c]) 后
   // 返回的应该是 4 个子元素，c1 c1 c2 c2
@@ -354,11 +362,19 @@ function mapSingleChildIntoContext(bookKeeping, child, childKey) {
           childKey,
       );
     }
+
+    // 从mapChildren为入口进入函数，经过多次判断，对单个可渲染的节点进行克隆
+    //  相当于对子树的所有节点复制了一遍，并按照原来的结构重新组装回去
+    //  result就是mapChildren函数最终返回的内容（经历多层引用传递）
+    // mappedChild就是这个节点下面所有子元素的一份复制（）
+
     result.push(mappedChild);
   }
 }
 
 function mapIntoWithKeyPrefixInternal(children, array, prefix, func, context) {
+  //   根据mapChildren的调用，最后返回的是array
+  //    这个函数修改了array
   // 这里是处理 key，不关心也没事
   let escapedPrefix = '';
   if (prefix != null) {
