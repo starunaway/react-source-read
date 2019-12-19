@@ -17,6 +17,8 @@ import warning from 'shared/warning';
 // createContext 可以让我们实现状态管理
 // 还能够解决传递 Props drilling 的问题
 // 假如一个子组件需要父组件的一个属性，但是中间间隔了好几层，这就会出现开发和维护的一个成本。这时候就可以通过这个 API 来解决
+
+//  有点类似redux，但是可以定义在任意一层的组件
 export function createContext<T>(
   defaultValue: T,
   calculateChangedBits: ?(a: T, b: T) => number,
